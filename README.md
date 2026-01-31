@@ -1,18 +1,18 @@
 <h1 align="center">
-  🇮🇳 ᴛᴜsʜᴀʀ ᴅʀᴍ ᴛxᴛ ᴜᴘʟᴏᴀᴅᴇʀ 🇮🇳
+  🇮🇳 ❣𓊈Ⅾ𝔯Ṃũ𝕤īcī𝗮𝚗𓊉❣(✿◠‿◠) ᴅʀᴍ ᴛxᴛ ᴜᴘʟᴏᴀᴅᴇʀ 🇮🇳
 </h1>
 
 ![Typing SVG](https://readme-typing-svg.herokuapp.com/?lines=Welcome+To+Txt+Uploader+Bot+!)
 
 ## 😎 Credit
 
-🥳 Credit Goes To [Tushar](https://t.me/newstudent1885)
+🥳 Credit Goes To [❣𓊈Ⅾ𝔯Ṃũ𝕤īcī𝗮𝚗𓊉❣(✿◠‿◠)](https://t.me/ramramsa00bot)
 
   
 ## 🔥 Commands
 
 - **`/start2`**: ⚡ check bot is alive.
-- **`/tushar2` or `upload2`**:  📁 upload txt file.
+- **`/ramram2` or `upload2`**:  📁 upload txt file.
 - **`/stop2`**: 🛑 stop ongoing process.
 - **`/restart2`**: 🔮 restart the bot.
 - **`/sudo add`**: 🎊 add user or group or channel (owner).
