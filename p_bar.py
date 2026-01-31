@@ -1,8 +1,7 @@
 import time
-import math
 import os
 from pyrogram.errors import FloodWait
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 class Timer:
     def __init__(self, time_between=5):
@@ -15,41 +14,41 @@ class Timer:
             return True
         return False
 
-# Function to convert bytes to a human-readable format
-def hrb(value, digits=2, delim="", postfix="")
+def hrb(value, digits=2, delim="", postfix=""):
     if value is None:
         return None
     chosen_unit = "B"
     for unit in ("KiB", "MiB", "GiB", "TiB"):
-        if value > 1000:
+        if value > 1024:
             value /= 1024
             chosen_unit = unit
         else:
             break
-    return f"{value:.{digits}f}" + delim + chosen_unit + postfix
+    return f"{value:.{digits}f}{delim}{chosen_unit}{postfix}"
 
-# Function to convert seconds to a human-readable time format
 def hrt(seconds, precision=0):
     pieces = []
-    value = timedelta(seconds=seconds)
-    
+    if seconds is None:
+        return "-"
+    value = timedelta(seconds=int(seconds))
+
     if value.days:
         pieces.append(f"{value.days}d")
 
-    seconds = value.seconds
+    s = value.seconds
 
-    if seconds >= 3600:
-        hours = int(seconds / 3600)
+    if s >= 3600:
+        hours = int(s / 3600)
         pieces.append(f"{hours}h")
-        seconds -= hours * 3600
+        s -= hours * 3600
 
-    if seconds >= 60:
-        minutes = int(seconds / 60)
+    if s >= 60:
+        minutes = int(s / 60)
         pieces.append(f"{minutes}m")
-        seconds -= minutes * 60
+        s -= minutes * 60
 
-    if seconds > 0 or not pieces:
-        pieces.append(f"{seconds}s")
+    if s > 0 or not pieces:
+        pieces.append(f"{s}s")
 
     if not precision:
         return "".join(pieces)
@@ -58,38 +57,53 @@ def hrt(seconds, precision=0):
 
 timer = Timer()
 
-# Designed by Mendax
+# Designed by Mendax (fixed syntax & safe progress message)
 async def progress_bar(current, total, reply, start):
-    if timer.can_send():
+    try:
+        if not timer.can_send():
+            return
+
         now = time.time()
         diff = now - start
         if diff < 1:
             return
-        
+
         perc = f"{current * 100 / total:.1f}%"
-        elapsed_time = round(diff)
+        elapsed_time = max(1, int(diff))
         speed = current / elapsed_time if elapsed_time > 0 else 0
-        remaining_bytes = total - current
-        
+        remaining_bytes = max(0, total - current)
+
         if speed > 0:
             eta_seconds = remaining_bytes / speed
             eta = hrt(eta_seconds, precision=1)
         else:
             eta = "-"
-        
-        sp = str(hrb(speed)) + "/s"
+
+        sp = hrb(speed) + "/s"
         tot = hrb(total)
         cur = hrb(current)
-        
-        # Don't even change anything till here
-        # Calculate progress bar dots
+
+        # progress bar
         bar_length = 10
-        completed_length = int(current * bar_length / total)
+        completed_length = int(current * bar_length / total) if total > 0 else 0
+        completed_length = min(bar_length, max(0, completed_length))
         remaining_length = bar_length - completed_length
-        progress_bar = "▰" * completed_length + "▱" * remaining_length
+        progress_bar_str = "▰" * completed_length + "▱" * remaining_length
 
-        try:
-            await reply.edit(f'</b>╭──⌯════🌟𝗨𝗣𝗟𝗢𝗔𝗗𝗜𝗡𝗚🌟═════⌯──╮ \n├⚡ {progress_bar}\n ├🚀 𝗦𝗽𝗲𝗲𝗱 ➠ {sp} \n ├📛 𝗣𝗿𝗼𝗴𝗿𝗲𝘀𝘀 ➠ {perc} \n ├📟 𝗟𝗼𝗮𝗱𝗲𝗱 ➠ {cur} \n ├🧲 𝗦𝗶𝘇𝗲 ➠ {tot} \n ├🕑 𝗘𝘁𝗮 ➠ {eta} \n╰─══👨🏻‍💻ramramsa00❤️👨🏻‍💻══─╯\n\n🙂 बस तेरे बिना हर शाम अधूरी लगती है!🙂</b>') 
-        except FloodWait as e:
-            time.sleep(e.x)
+        message = (
+            "╭──⌯════🌟 U P L O A D I N G 🌟════⌯──╮\n"
+            f"├ {progress_bar_str} {perc}\n"
+            f"├ Speed ➜ {sp}\n"
+            f"├ ETA ➜ {eta}\n"
+            f"├ {cur} / {tot}\n"
+            "╰──────────────────────────────────╯"
+        )
 
+        # Use edit_text for Pyrogram message editing
+        await reply.edit_text(message)
+
+    except FloodWait as e:
+        time.sleep(e.x)
+    except Exception:
+        # ignore other transient errors to avoid crashing progress updates
+        pass
