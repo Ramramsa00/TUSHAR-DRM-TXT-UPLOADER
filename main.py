@@ -100,16 +100,6 @@ async def sudo_command(bot: Client, message: Message):
             await message.reply_text("**Usage:** `/sudo add <user_id>` or `/sudo remove <user_id>`")
     except Exception as e:
         await message.reply_text(f"**Error:** {str(e)}")
-
-# Inline keyboard for start command
-keyboard = InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("🇮🇳ʙᴏᴛ ᴍᴀᴅᴇ ʙʏ🇮🇳" ,url=f"http://t.me/ramramsa00") ],
-                    [
-                    
-            ]
-      )
     
 # Image URLs for the random image feature
 image_urls = [
